@@ -1,42 +1,17 @@
-import { useParams, Link, NavLink, Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
-
+import { Link, NavLink, Outlet, useLoaderData } from "react-router-dom";
+import { getHostVans } from "../pages/API";
+import RequireAuth from "./RequireAuth";
+export const loader = async ({ params, request }) => {
+  await RequireAuth(request);
+  return getHostVans(params.id);
+};
 const HostVanDetail = () => {
-  const { id } = useParams();
-  const [currentVan, setCurrentVan] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
   const activeStyles = {
     fontWeight: "bold",
     textDecoration: "underline",
     color: "#161616",
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/vans/${id}`);
-        if (!response.ok) {
-          throw new Error("There is no data");
-        }
-        const data = await response.json();
-        setIsLoading(false);
-        setCurrentVan(data);
-      } catch (error) {
-        setIsError(error.message);
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [id]);
-  if (isLoading) {
-    return <h2>Loading...</h2>;
-  }
-
-  if (isError) {
-    return <h2>{isError}</h2>;
-  }
-
+  const currentVan = useLoaderData();
   return (
     <section>
       <Link to=".." relative="path" className="back-button">

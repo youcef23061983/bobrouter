@@ -1,56 +1,30 @@
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-const url = "  http://localhost:3000/vans";
+import { Link, useLoaderData, useSearchParams } from "react-router-dom";
+import { getVans } from "./API";
+export const loader = async () => {
+  return getVans();
+};
 
 const Vans = () => {
-  // --------------bob method------------
-  // const [vans, setVans] = useState([]);
-  // useEffect(() => {
-  //   fetch(url)
-  //     .then((res) => res.json())
-  //     .then((data) => setVans(data.Vans));
-  // }, [url]);
-
   const [searchParams, setSearchParams] = useSearchParams();
   console.log(searchParams.get("type"));
   console.log(searchParams.toString());
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [vans, setVans] = useState([]);
-  useEffect(() => {
-    const fetchVans = async () => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          throw Error("there is no data");
-        }
-        const data = await res.json();
-        setIsLoading(false);
-        setVans(data);
-      } catch (error) {
-        setIsError(error.message);
-        setIsLoading(false);
-      }
-    };
-    fetchVans();
-  }, [url]);
-  if (isLoading) {
-    return <h2>....is loading</h2>;
-  }
-  if (isError) {
-    return (
-      <>
-        <h2>Error</h2>
-        <p>{isError}</p>
-        <Link to="/">back to the home page</Link>
-      </>
-    );
-  }
+
+  const vans = useLoaderData();
 
   const typeFilter = searchParams.get("type");
   const displayVans = typeFilter
     ? vans.filter((van) => van.type === typeFilter)
     : vans;
+  function handleFilterChange(key, value) {
+    setSearchParams((prevParams) => {
+      if (value === null) {
+        prevParams.delete(key);
+      } else {
+        prevParams.set(key, value);
+      }
+      return prevParams;
+    });
+  }
   return (
     <>
       <div className="van-list-container">
@@ -60,7 +34,7 @@ const Vans = () => {
             className={`van-type simple ${
               typeFilter === "simple" ? "selected" : null
             }`}
-            onClick={() => setSearchParams({ type: "simple" })}
+            onClick={() => handleFilterChange("type", "simple")}
           >
             simple
           </button>
@@ -68,7 +42,7 @@ const Vans = () => {
             className={`van-type rugged ${
               typeFilter === "rugged" ? "selected" : null
             }`}
-            onClick={() => setSearchParams({ type: "rugged" })}
+            onClick={() => handleFilterChange("type", "rugged")}
           >
             rugged
           </button>
@@ -76,11 +50,14 @@ const Vans = () => {
             className={`van-type luxury ${
               typeFilter === "luxury" ? "selected" : null
             }`}
-            onClick={() => setSearchParams({ type: "luxury" })}
+            onClick={() => handleFilterChange("type", "luxury")}
           >
             luxury
           </button>
-          <button className="van-type" onClick={() => setSearchParams({})}>
+          <button
+            className="van-type"
+            onClick={() => handleFilterChange("type", null)}
+          >
             clear filters
           </button>
         </div>

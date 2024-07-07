@@ -1,46 +1,46 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
-const Header = () => {
+export default function Header() {
+  const activeStyles = {
+    fontWeight: "bold",
+    textDecoration: "underline",
+    color: "#161616",
+  };
+
+  function fakeLogOut() {
+    localStorage.removeItem("loggedin");
+  }
+
   return (
     <header>
-      <NavLink
-        style={({ isActive }) => {
-          return { color: isActive ? "red" : "grey" };
-        }}
-        className="site-logo"
-        to=""
-      >
+      <Link className="site-logo" to="/">
         #VanLife
-      </NavLink>
+      </Link>
       <nav>
         <NavLink
-          style={({ isActive }) => {
-            return { color: isActive ? "red" : "grey" };
-          }}
           to="host"
+          style={({ isActive }) => (isActive ? activeStyles : null)}
         >
-          host
+          Host
         </NavLink>
         <NavLink
-          style={({ isActive }) => {
-            return { color: isActive ? "red" : "grey" };
-          }}
           to="about"
+          style={({ isActive }) => (isActive ? activeStyles : null)}
         >
           About
         </NavLink>
         <NavLink
-          style={({ isActive }) => {
-            return { color: isActive ? "red" : "grey" };
-          }}
           to="vans"
+          style={({ isActive }) => (isActive ? activeStyles : null)}
         >
           Vans
         </NavLink>
+        <Link to="login" className="login-link">
+          <img src="../assets/images/avatar-icon.png" className="login-icon" />
+        </Link>
+        <button onClick={fakeLogOut}>X</button>
       </nav>
     </header>
   );
-};
-
-export default Header;
+}

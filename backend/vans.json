@@ -54,6 +54,19 @@
       "type": "rugged",
       "hostId": "123"
     },
-    { "id": "123", "email": "b@b.com", "password": "p123", "name": "Bob" }
+    {
+      "id": "123",
+      "email": "b@b.com",
+      "password": "p123",
+      "name": "Bob"
+    }
+  ],
+  "users": [
+    {
+      "id": "123",
+      "email": "b@b.com",
+      "password": "p123",
+      "name": "Bob"
+    }
   ]
 }

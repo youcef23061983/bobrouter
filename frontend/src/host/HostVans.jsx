@@ -1,44 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-const url = "  http://localhost:3000/vans";
+import { Link, useLoaderData } from "react-router-dom";
+import { getHostVans } from "../pages/API";
+import RequireAuth from "./RequireAuth";
+export async function loader({ request }) {
+  await RequireAuth(request);
+  return getHostVans();
+}
 
 const HostVan = () => {
-  const [vans, setVans] = useState([]);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  useEffect(() => {
-    const fetchVans = async () => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          throw Error("there is no data");
-        }
-        const data = await res.json();
-        setIsLoading(false);
-        setVans(data);
-      } catch (error) {
-        setIsError(error.message);
-        setIsLoading(false);
-      }
-    };
-    fetchVans();
-  }, [url]);
-
-  if (isLoading) {
-    return <h2>....is loading</h2>;
-  }
-  if (isError) {
-    return (
-      <>
-        <h2>Error</h2>
-        <p>{isError}</p>
-        <Link to="/">back to the home page</Link>
-      </>
-    );
-  }
-
+  const vans = useLoaderData();
   const hostVansEls = vans.map((van) => (
     <Link to={van.id} key={van.id} className="host-van-link-wrapper">
       <div className="host-van-single" key={van.id}>
